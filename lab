@@ -1,0 +1,628 @@
+@param {boolean} itShouldResolve - Чи повинен проміс успішно виконатися
+ * @returns {Promise<string, string>}
+ */
+function makePromiseWithConstructor(itShouldResolve) {
+    // TODO: Створіть новий Promise
+    // Якщо itShouldResolve === true, викличте resolve('Success!')
+    // Інакше викличте reject('Failed!')
+    return new Promise((resolve, reject) => {
+        if (itShouldResolve) {
+            resolve('Success!');
+        } else {
+            reject('Failed!');
+        }
+    });
+}
+
+// Перевірка:
+makePromiseWithConstructor(true)
+    .then(result => console.log(' Тест 1.1 (resolve):', result))
+    .catch(error => console.log('   Помилка:', error));
+
+makePromiseWithConstructor(false)
+    .then(result => console.log('   Не повинно виконатися'))
+    .catch(error => console.log(' Тест 1.1 (reject):', error));
+
+
+// ==================== ЗАВДАННЯ 1.2 ====================
+/**
+ * Створіть проміс, який резолвиться з числом після перевірки
+ * Якщо число парне - resolve, якщо непарне - reject
+ * 
+ * @param {number} number 
+ * @returns {Promise<number, string>}
+ */
+function checkEvenNumber(number) {
+    // TODO: Реалізуйте функцію
+    // Підказка: використовуйте number % 2 === 0
+    return new Promise((resolve, reject) => {
+        if (number % 2 === 0) {
+            resolve(number);
+        } else {
+            reject(`${number} is not even`);
+        }
+    });
+}
+
+// Перевірка:
+checkEvenNumber(4)
+    .then(num => console.log(' Тест 1.2 (парне):', num))
+    .catch(err => console.log('   Помилка:', err));
+
+checkEvenNumber(5)
+    .then(num => console.log('   Не повинно виконатися'))
+    .catch(err => console.log(' Тест 1.2 (непарне):', err));
+
+
+// ==================== ЗАВДАННЯ 1.3 ====================
+/**
+ * Створіть проміс з валідацією email
+ * Якщо email містить @ та . - resolve з email
+ * Інакше - reject з повідомленням про помилку
+ * 
+ * @param {string} email 
+ * @returns {Promise<string, string>}
+ */
+function validateEmail(email) {
+    // TODO: Реалізуйте функцію
+    // Підказка: використовуйте includes('@') та includes('.')
+    return new Promise((resolve, reject) => {
+        if (email.includes('@') && email.includes('.')) {
+            resolve(email);
+        } else {
+            reject('Invalid email format');
+        }
+    });
+}
+
+// Перевірка:
+validateEmail('test@example.com')
+    .then(email => console.log(' Тест 1.3 (валідний):', email))
+    .catch(err => console.log('   Помилка:', err));
+
+validateEmail('invalid-email')
+    .then(email => console.log('   Не повинно виконатися'))
+    .catch(err => console.log(' Тест 1.3 (невалідний):', err));
+
+// ==================== ЗАВДАННЯ 1.4 ====================
+/**
+ * Створіть проміс, який симулює авторизацію користувача
+ * - Якщо username та password не порожні - resolve з об'єктом користувача
+ * - Якщо username порожній - reject з 'Username is required'
+ * - Якщо password порожній - reject з 'Password is required'
+ * - Якщо password коротший за 6 символів - reject з 'Password too short'
+ * 
+ * @param {string} username 
+ * @param {string} password 
+ * @returns {Promise<{username: string, authenticated: boolean}, string>}
+ */
+function authenticateUser(username, password) {
+    // TODO: Реалізуйте функцію з всіма перевірками
+    return new Promise((resolve, reject) => {
+        if (!username) {
+            reject('Username is required');
+        } else if (!password) {
+            reject('Password is required');
+        } else if (password.length < 6) {
+            reject('Password too short');
+        } else {
+            resolve({ username: username, authenticated: true });
+        }
+    });
+}
+
+// Перевірка:
+authenticateUser('john', 'password123')
+    .then(user => console.log(' Тест 1.4 (успіх):', user))
+    .catch(err => console.log('   Помилка:', err));
+
+authenticateUser('', 'password123')
+    .then(user => console.log('   Не повинно виконатися'))
+    .catch(err => console.log(' Тест 1.4 (немає username):', err));
+
+authenticateUser('john', '12345')
+    .then(user => console.log('   Не повинно виконатися'))
+    .catch(err => console.log(' Тест 1.4 (короткий пароль):', err));
+
+
+// ==================== ЗАВДАННЯ 1.5 ====================
+/**
+ * Створіть функцію, яка перевіряє вік користувача
+ * - age < 0: reject 'Invalid age'
+ * - age < 18: reject 'Too young'
+ * - age >= 18 та age < 65: resolve {age, category: 'adult'}
+ * - age >= 65: resolve {age, category: 'senior'}
+ * 
+ * @param {number} age 
+ * @returns {Promise<{age: number, category: string}, string>}
+ */
+function checkAge(age) {
+    // TODO: Реалізуйте функцію
+    return new Promise((resolve, reject) => {
+        if (age < 0) {
+            reject('Invalid age');
+        } else if (age < 18) {
+            reject('Too young');
+        } else if (age >= 18 && age < 65) {
+            resolve({ age: age, category: 'adult' });
+        } else {
+            resolve({ age: age, category: 'senior' });
+        }
+    });
+}
+
+// Перевірка (розкоментуйте після реалізації):
+checkAge(25).then(console.log).catch(console.error);
+checkAge(70).then(console.log).catch(console.error);
+checkAge(15).then(console.log).catch(console.error);
+checkAge(-5).then(console.log).catch(console.error);
+
+/**
+ * ЗАВДАННЯ 2: Promise.resolve() та статичні методи
+ * 
+ * Promise.resolve() - швидкий спосіб створити успішний проміс
+ */
+
+// ==================== ЗАВДАННЯ 2.1 ====================
+/**
+ * Створіть проміс, який одразу резолвиться зі значенням
+ * 
+ * @param {any} value - Будь-яке значення
+ * @returns {Promise<any>}
+ */
+function makePromiseResolveWith(value) {
+    // TODO: Використайте Promise.resolve()
+    return Promise.resolve(value);
+}
+
+// Перевірка:
+makePromiseResolveWith(5)
+    .then(value => console.log(' Тест 2.1:', value)); // Очікується: 5
+
+
+// ==================== ЗАВДАННЯ 2.2 ====================
+/**
+ * Створіть функцію, яка приймає масив чисел
+ * і повертає проміс з сумою цих чисел
+ * 
+ * @param {number[]} numbers 
+ * @returns {Promise<number>}
+ */
+function sumNumbers(numbers) {
+    // TODO: Порахуйте суму та поверніть її через Promise.resolve()
+    const sum = numbers.reduce((total, num) => total + num, 0);
+    return Promise.resolve(sum);
+}
+
+// Перевірка:
+sumNumbers([1, 2, 3, 4, 5])
+    .then(sum => console.log(' Тест 2.2:', sum)); // Очікується: 15
+
+
+// ==================== ЗАВДАННЯ 2.3 ====================
+/**
+ * Створіть функцію, яка конвертує об'єкт користувача
+ * додаючи йому поле fullName
+ * 
+ * @param {{firstName: string, lastName: string}} user 
+ * @returns {Promise<{firstName: string, lastName: string, fullName: string}>}
+ */
+function addFullName(user) {
+    // TODO: Додайте поле fullName і поверніть через проміс
+    // fullName = firstName + ' ' + lastName
+    return Promise.resolve({
+        ...user,
+        fullName: `${user.firstName} ${user.lastName}`
+    });
+}
+
+// Перевірка:
+addFullName({ firstName: 'John', lastName: 'Doe' })
+    .then(user => console.log(' Тест 2.3:', user));
+// Очікується: { firstName: 'John', lastName: 'Doe', fullName: 'John Doe' }
+
+
+// ==================== ЗАВДАННЯ 2.4 ====================
+/**
+ * Створіть функцію, яка приймає проміс або звичайне значення
+ * і завжди повертає проміс
+ * Підказка: Promise.resolve() може приймати вже існуючий проміс
+ * 
+ * @param {any} value 
+ * @returns {Promise<any>}
+ */
+function ensurePromise(value) {
+    // TODO: Поверніть проміс, навіть якщо value вже є промісом
+    return Promise.resolve(value);
+}
+
+// Перевірка:
+ensurePromise(42)
+    .then(val => console.log(' Тест 2.4a:', val)); // 42
+
+ensurePromise(Promise.resolve(100))
+    .then(val => console.log(' Тест 2.4b:', val)); // 100
+
+
+// ==================== ЗАВДАННЯ 2.5 ====================
+/**
+ * Створіть функцію для конвертації callback-based функції в проміс
+ * Функція має приймати значення та callback(error, result)
+ * Поверніть проміс, який резолвиться з результатом
+ * 
+ * @param {any} value 
+ * @returns {Promise<string>}
+ */
+function callbackToPromise(value) {
+    // TODO: Симулюйте роботу з callback
+    // Створіть проміс, який використовує setTimeout для виклику callback
+    // callback має викликатися через 100мс з результатом 'Processed: ' + value
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            // Симулюємо callback(error, result)
+            // В даному випадку завжди успішно
+            resolve('Processed: ' + value);
+        }, 100);
+    });
+}
+
+// Перевірка:
+callbackToPromise('test')
+    .then(result => console.log(' Тест 2.5:', result));
+// Очікується: 'Processed: test'
+
+
+// ==================== ЗАВДАННЯ 2.6 ====================
+/**
+ * Створіть функцію, яка конвертує масив значень в масив промісів
+ * Кожен проміс має резолвитися з відповідним значенням
+ * 
+ * @param {any[]} values 
+ * @returns {Promise<any>[]}
+ */
+function valuesToPromises(values) {
+    // TODO: Конвертуйте кожне значення в проміс
+    return values.map(value => Promise.resolve(value));
+}
+
+// Перевірка:
+const promises = valuesToPromises([1, 2, 3]);
+Promise.all(promises)
+    .then(results => console.log(' Тест 2.6:', results));
+// Очікується: [1, 2, 3]
+
+
+// ==================== ЗАВДАННЯ 2.7 ====================
+/**
+ * Створіть функцію-обгортку для синхронних функцій,
+ * яка перехоплює помилки та повертає проміс
+ * 
+ * @param {Function} fn - Синхронна функція
+ * @param {any[]} args - Аргументи для функції
+ * @returns {Promise<any>}
+ */
+function tryCatchPromise(fn, ...args) {
+    // TODO: Викличте fn з args
+    // Якщо fn кидає помилку - поверніть rejected проміс
+    // Інакше - поверніть resolved проміс з результатом
+    try {
+        const result = fn(...args);
+        return Promise.resolve(result);
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
+// Перевірка:
+const goodFunction = (a, b) => a + b;
+const badFunction = () => { throw new Error('Oops!'); };
+
+tryCatchPromise(goodFunction, 5, 3)
+    .then(result => console.log(' Тест 2.7a:', result)); // 8
+
+tryCatchPromise(badFunction)
+    .catch(error => console.log(' Тест 2.7b:', error.message)); // 'Oops!'
+/**
+ * ЗАВДАННЯ 7: Ланцюжки промісів (Promise Chaining)
+ * 
+ * Ланцюжки промісів - потужний інструмент для послідовної обробки даних
+ * Кожен .then() повертає новий проміс
+ */
+
+// ==================== ЗАВДАННЯ 7.1 ====================
+/**
+ * Створіть ланцюжок, який:
+ * 1. Починається з числа 5
+ * 2. Множить на 2
+ * 3. Додає 10
+ * 4. Конвертує в рядок
+ * 
+ * Очікуваний результат: "20"
+ */
+function simpleChain() {
+    return Promise.resolve(5)
+        // TODO: Додайте .then() для множення на 2
+        .then(num => num * 2)
+        // TODO: Додайте .then() для додавання 10
+        .then(num => num + 10)
+        // TODO: Додайте .then() для конвертації в рядок
+        .then(num => num.toString());
+}
+
+// Перевірка:
+simpleChain()
+    .then(result => console.log(' Тест 7.1:', result)); // "20"
+
+
+// ==================== ЗАВДАННЯ 7.2 ====================
+/**
+ * Створіть ланцюжок обробки даних користувача:
+ * 1. Отримати об'єкт {name: 'john doe', age: 25}
+ * 2. Конвертувати name у верхній регістр
+ * 3. Додати поле isAdult (age >= 18)
+ * 4. Додати поле nameLength
+ * 
+ * @param {{name: string, age: number}} user 
+ * @returns {Promise<{name: string, age: number, isAdult: boolean, nameLength: number}>}
+ */
+function processUser(user) {
+    return Promise.resolve(user)
+        // TODO: Реалізуйте ланцюжок трансформацій
+        .then(user => ({
+            ...user,
+            name: user.name.toUpperCase()
+        }))
+        .then(user => ({
+            ...user,
+            isAdult: user.age >= 18
+        }))
+        .then(user => ({
+            ...user,
+            nameLength: user.name.length
+        }));
+}
+
+// Перевірка:
+processUser({ name: 'john doe', age: 25 })
+    .then(result => console.log(' Тест 7.2:', result));
+// Очікується: { name: 'JOHN DOE', age: 25, isAdult: true, nameLength: 8 }
+
+
+// ==================== ЗАВДАННЯ 7.3 ====================
+/**
+ * Створіть ланцюжок з асинхронними операціями
+ * Використовуйте функції нижче для побудови ланцюжка
+ */
+
+function fetchUserData(userId) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve({ id: userId, username: 'user_' + userId });
+        }, 100);
+    });
+}
+
+function fetchUserPosts(user) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve({
+                ...user,
+                posts: ['Post 1', 'Post 2', 'Post 3']
+            });
+        }, 100);
+    });
+}
+
+function countPosts(userData) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve({
+                ...userData,
+                postCount: userData.posts.length
+            });
+        }, 100);
+    });
+}
+
+/**
+ * Створіть функцію, яка:
+ * 1. Отримує дані користувача
+ * 2. Отримує його пости
+ * 3. Рахує кількість постів
+ * 
+ * @param {number} userId 
+ * @returns {Promise<{id: number, username: string, posts: string[], postCount: number}>}
+ */
+function getUserWithPostCount(userId) {
+    // TODO: Побудуйте ланцюжок з трьох функцій вище
+    return fetchUserData(userId)
+        .then(user => fetchUserPosts(user))
+        .then(userWithPosts => countPosts(userWithPosts));
+}
+
+// Перевірка:
+getUserWithPostCount(123)
+    .then(result => console.log(' Тест 7.3:', result));
+
+
+// ==================== ЗАВДАННЯ 7.4 ====================
+/**
+ * Створіть ланцюжок з обробкою помилок
+ * Якщо number < 0 - кинути помилку
+ * Інакше виконати обчислення
+ */
+
+function validateNumber(number) {
+    if (number < 0) {
+        throw new Error('Number must be positive');
+    }
+    return number;
+}
+
+/**
+ * Створіть функцію, яка:
+ * 1. Валідує число (використовуйте validateNumber)
+ * 2. Множить на 2
+ * 3. Додає 5
+ * 4. Повертає результат у форматі {original: number, result: number}
+ * 5. Обробляє помилки та повертає {error: string}
+ * 
+ * @param {number} number 
+ * @returns {Promise<{original?: number, result?: number, error?: string}>}
+ */
+function safeCalculation(number) {
+    // TODO: Реалізуйте з обробкою помилок
+    return Promise.resolve(number)
+        .then(validateNumber)
+        .then(num => num * 2)
+        .then(num => num + 5)
+        .then(result => ({ original: number, result: result }))
+        .catch(error => ({ error: error.message }));
+}
+
+// Перевірка:
+safeCalculation(10)
+    .then(result => console.log(' Тест 7.4a:', result));
+// Очікується: { original: 10, result: 25 }
+
+safeCalculation(-5)
+    .then(result => console.log(' Тест 7.4b:', result));
+// Очікується: { error: 'Number must be positive' }
+
+
+// ==================== ЗАВДАННЯ 7.5 ====================
+/**
+ * Створіть складний ланцюжок обробки замовлення
+ */
+
+const products = {
+    101: { id: 101, name: 'Laptop', price: 1000, stock: 5 },
+    102: { id: 102, name: 'Mouse', price: 25, stock: 50 },
+    103: { id: 103, name: 'Keyboard', price: 75, stock: 0 }
+};
+
+function getProduct(productId) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const product = products[productId];
+            if (product) {
+                resolve(product);
+            } else {
+                reject(new Error('Product not found'));
+            }
+        }, 100);
+    });
+}
+
+function checkStock(product) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (product.stock > 0) {
+                resolve(product);
+            } else {
+                reject(new Error('Out of stock'));
+            }
+        }, 100);
+    });
+}
+
+function calculateTotal(product, quantity) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve({
+                product: product.name,
+                quantity: quantity,
+                unitPrice: product.price,
+                total: product.price * quantity
+            });
+        }, 100);
+    });
+}
+
+/**
+ * Створіть функцію оформлення замовлення:
+ * 1. Отримати продукт за ID
+ * 2. Перевірити наявність на складі
+ * 3. Обчислити вартість
+ * 4. Обробити всі можливі помилки
+ * 
+ * @param {number} productId 
+ * @param {number} quantity 
+ * @returns {Promise<{product: string, quantity: number, unitPrice: number, total: number} | {error: string}>}
+ */
+function placeOrder(productId, quantity) {
+    // TODO: Реалізуйте повний ланцюжок з обробкою помилок
+    return getProduct(productId)
+        .then(product => checkStock(product))
+        .then(product => calculateTotal(product, quantity))
+        .catch(error => ({ error: error.message }));
+}
+
+// Перевірка:
+placeOrder(101, 2)
+    .then(result => console.log(' Тест 7.5a:', result));
+// Очікується: { product: 'Laptop', quantity: 2, unitPrice: 1000, total: 2000 }
+
+placeOrder(103, 1)
+    .then(result => console.log(' Тест 7.5b:', result));
+// Очікується: { error: 'Out of stock' }
+
+placeOrder(999, 1)
+    .then(result => console.log(' Тест 7.5c:', result));
+// Очікується: { error: 'Product not found' }
+
+
+// ==================== БОНУСНЕ ЗАВДАННЯ 7.6 🔥 ====================
+/**
+ * Створіть функцію, яка виконує серію трансформацій над рядком
+ * і повертає історію всіх змін
+ * 
+ * @param {string} text 
+ * @returns {Promise<{original: string, steps: string[], final: string}>}
+ */
+function transformWithHistory(text) {
+    // TODO: Створіть ланцюжок, який:
+    // 1. Зберігає оригінальний текст
+    // 2. Конвертує в нижній регістр (зберегти в історію)
+    // 3. Видаляє пробіли (зберегти в історію)
+    // 4. Інвертує рядок (зберегти в історію)
+    // 5. Повертає об'єкт з original, steps[], final
+    const steps = [];
+    
+    return Promise.resolve(text)
+        .then(original => {
+            steps.push(original);
+            return original;
+        })
+        .then(str => {
+            const lowercased = str.toLowerCase();
+            steps.push(lowercased);
+            return lowercased;
+        })
+        .then(str => {
+            const noSpaces = str.replace(/\s/g, '');
+            steps.push(noSpaces);
+            return noSpaces;
+        })
+        .then(str => {
+            const reversed = str.split('').reverse().join('');
+            steps.push(reversed);
+            return reversed;
+        })
+        .then(final => ({
+            original: text,
+            steps: steps.slice(1), // Видаляємо оригінал з кроків
+            final: final
+        }));
+}
+
+// Перевірка (розкоментуйте після реалізації):
+transformWithHistory('Hello World')
+    .then(result => console.log(' Тест 7.6:', result));
+// Очікується: {
+//   original: 'Hello World',
+//   steps: ['hello world', 'helloworld', 'dlrowolleh'],
+//   final: 'dlrowolleh'
+// }
+
+
